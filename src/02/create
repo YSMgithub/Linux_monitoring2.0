@@ -1,0 +1,65 @@
+#!/bin/bash
+
+function get_name {
+  local name=""
+  local pattern="$1"
+  local count
+
+  for (( i=0; i<${#pattern}; i++ )); do
+    token=${pattern:$i:1}
+
+    [[ $i -eq 0 ]] && count="$2" || count=1
+
+    for (( j=0; j<$count; j++ )); do
+      name+=$token
+    done
+
+  done
+
+  echo "$name"
+}
+
+folder_pattern=$1
+file_name_pattern=$(echo "$2" | awk -F "." '{print $1}')
+file_extension_pattern=$(echo "$2" | awk -F "." '{print $2}')
+size=$(df / | tail -n 1 | awk '{print $4}')
+date=$(date +"%d%m%y")
+
+while [[ $size -gt 1048576 ]]; do
+  random_path=$(sudo find ~ -type d | shuf | head -n 1)
+  folder_count=${RANDOM:0:2}
+
+  if ! [[ -d $random_path ]] || [[ $random_path =~ "/bin" ]] || [[ $random_path =~ "/sbin" ]]; then
+    continue
+  fi
+
+  counter_d=4
+  for (( k=0; k<$folder_count; k++ )); do
+    folder_path=$(get_name "$folder_pattern" "$counter_d")
+    folder_path="${random_path}/${folder_path}_${date}/"
+    sudo mkdir "$folder_path" 2>/dev/null
+    if ! [[ -d $folder_path ]]; then
+      continue
+    fi
+
+    echo "folder;$folder_path;$date" >> logfile
+
+    file_count=${RANDOM:0:2}
+    counter_f=4
+    for (( l=0; l<$file_count; l++ )); do
+      file_name=$(get_name "$file_name_pattern" "$counter_f")
+      file_extension=$file_extension_pattern
+      file_path="${folder_path}${file_name}.${file_extension}_${date}"
+      size=$(df / | tail -n 1 | awk '{print $4}')
+
+      if [[ $size -gt 1048576 ]]; then
+        sudo fallocate -l "$3" "$file_path" 2>/dev/null && echo "file;$file_path;$date;$3" >> logfile
+      else
+        echo "Can't create $file_path: disk free space is less than 1G"
+        exit 0
+      fi
+      (( counter_f++ ))
+    done
+    (( counter_d++ ))
+  done
+done

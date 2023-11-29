@@ -1,0 +1,22 @@
+#!/bin/bash
+
+echo "Enter start date: YYYY-mm-DD HH:MM"
+read start_date
+if ! [[ $start_date =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}\ [0-9]{2}:[0-9]{2}$ ]]; then
+  echo "Invalid date: $start_date"
+  exit 2
+fi
+echo "Enter end date: YYYY-mm-DD HH:MM"
+read end_date
+if ! [[ $end_date =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}\ [0-9]{2}:[0-9]{2}$ ]]; then
+  echo "Invalid date: $end_date"
+  exit 2
+fi
+
+path_list=$(sudo find / -type d -newermt "$start_date" ! -newermt "$end_date"  2>/dev/null)
+
+for path in $path_list; do
+  if [[ -d $path ]]; then
+    sudo rm -rf "$path" 2>/dev/null  && echo "$path" >> logfile
+  fi
+done

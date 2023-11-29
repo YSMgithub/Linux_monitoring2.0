@@ -1,0 +1,9 @@
+#!/bin/bash
+
+path_list=$(cat ../02/logfile | grep ^folder | awk -F ";" '{print $2}')
+
+for path in $path_list; do
+  if [[ -d $path ]]; then
+    sudo rm -rf "$path"  && echo "$path" >> logfile
+  fi
+done

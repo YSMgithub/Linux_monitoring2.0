@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [[ $# -ne 3 ]]; then
+  echo "Invalid number of arguments (should be: 3)"
+  exit 1
+fi
+
+if ! [[ $1 =~ ^[a-z]{1,7}$ ]]; then
+  echo "Invalid list of english alphabet letters: $1 (should be: [1-7] a-z letters)"
+  exit 2
+fi
+
+if ! [[ $2 =~ ^[a-z]{1,7}\.[a-z]{1,3}$ ]]; then
+  echo "Invalid list of english alphabet letters used in the file name and extension: $2 (should be: [1-7].[1-3] a-z letters)"
+  exit 3
+fi
+
+if ! [[ $3 =~ ^([1-9][0-9]?|100)Mb$ ]]; then
+  echo "Invalid list of english alphabet letters: $3 (should be: [1-100]Mb)"
+  exit 4
+fi

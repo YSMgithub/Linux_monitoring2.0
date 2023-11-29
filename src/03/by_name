@@ -1,0 +1,16 @@
+#!/bin/bash
+
+echo "Enter name mask: [a-z]_DDMMYY"
+read -r mask
+if ! [[ $mask =~ ^[a-z]{1,7}_[0-9]{6}$ ]]; then
+  echo "Invalid name mask: $mask"
+  exit 2
+fi
+
+path_list=$(sudo find / -type d -name "*${mask}" 2>/dev/null)
+
+for path in $path_list; do
+  if [[ -d $path ]]; then
+    sudo rm -rf "$path" 2>/dev/null && echo "$path" >> logfile
+  fi
+done

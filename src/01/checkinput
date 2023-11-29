@@ -1,0 +1,36 @@
+#!/bin/bash
+
+if [[ $# -ne 6 ]]; then
+  echo "Invalid number of arguments (should be: 6)"
+  exit 1
+fi
+
+if ! [[ -d $1 ]] || [[ ${1: -1} != "/" ]]; then
+  echo "Invalid directory: $1 (should end with / symbol)"
+  exit 2
+fi
+
+if ! [[ $2 =~ ^[1-9]+$ ]]; then
+  echo "Invalid  number of subfolders: $2"
+  exit 3
+fi
+
+if ! [[ $3 =~ ^[a-z]{1,7}$ ]]; then
+  echo "Invalid list of english alphabet letters: $3 (should be: [1-7] a-z letters)"
+  exit 4
+fi
+
+if ! [[ $4 =~ ^[1-9]+$ ]]; then
+  echo "Invalid number of files in each created folder: $4"
+  exit 5
+fi
+
+if ! [[ $5 =~ ^[a-z]{1,7}\.[a-z]{1,3}$ ]]; then
+  echo "Invalid ist of english alphabet letters used in the file name and extension: $5 (should be: [1-7].[1-3] a-z letters)"
+  exit 6
+fi
+
+if ! [[ $6 =~ ^([1-9][0-9]?|100)kb$ ]]; then
+  echo "Invalid list of english alphabet letters: $6 (should be: [1-100]k)"
+  exit 7
+fi
